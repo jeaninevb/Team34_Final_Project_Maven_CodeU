@@ -50,10 +50,14 @@ public class WikiSearch {
 	 * 
 	 * @param map
 	 */
-	private  void print() {
+	public void print() {
 		List<Entry<String, Integer>> entries = sort();
+		if(entries.size()>0){
 		for (Entry<String, Integer> entry: entries) {
 			System.out.println(entry);
+		}
+		}else{
+			System.out.println("No Result.");
 		}
 	}
 	
@@ -64,33 +68,11 @@ public class WikiSearch {
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch or(WikiSearch that) {
-		Map<String, Integer> union = new HashMap<String, Integer>();
-		
-		for(Map.Entry<String, Integer> entry1: this.map.entrySet()){
-		
-			union.put(entry1.getKey(), entry1.getValue());
+		Map<String, Integer> union = new HashMap<String, Integer>(map);
+		for (String term: that.map.keySet()) {
+			int relevance = totalRelevance(this.getRelevance(term), that.getRelevance(term));
+			union.put(term, relevance);
 		}
-		
-		for(Map.Entry<String, Integer> entry2: that.map.entrySet()){
-			
-			Integer isDuplicate = union.get(entry2.getKey());
-			if(isDuplicate != null){
-			
-				union.put(entry2.getKey(), totalRelevance(isDuplicate, entry2.getValue()));
-			}
-			else{
-			
-				union.put(entry2.getKey(), entry2.getValue());
-			}
-		}	
-		
-// 		
-// 		for(Map.Entry<String, Integer> entry: union.entrySet()){
-// 			
-// 			System.out.println(entry.getKey() + "   " + entry.getValue());
-// 		}
-		
-		
 		return new WikiSearch(union);
 	}
 	
@@ -102,22 +84,12 @@ public class WikiSearch {
 	 */
 	public WikiSearch and(WikiSearch that) {
 		Map<String, Integer> intersection = new HashMap<String, Integer>();
-	
-		for(Map.Entry<String, Integer> entry1: this.map.entrySet()){
- 			for(Map.Entry<String, Integer> entry2: that.map.entrySet()){
- 					
- 					if(entry1.getKey().equals(entry2.getKey())){	
- 					
- 						intersection.put(entry1.getKey(), totalRelevance(entry1.getValue(),entry2.getValue())); 						
- 					}
- 			
- 			}
- 		}
- 		
-//  		for(Map.Entry<String, Integer> entry: intersection.entrySet()){
-// 			
-// 			System.out.println(entry.getKey() + "   " + entry.getValue());
-// 		}
+		for (String term: map.keySet()) {
+			if (that.map.containsKey(term)) {
+				int relevance = totalRelevance(this.map.get(term), that.map.get(term));
+				intersection.put(term, relevance);
+			}
+		}
 		return new WikiSearch(intersection);
 	}
 	
@@ -128,28 +100,11 @@ public class WikiSearch {
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch minus(WikiSearch that) {
-		Map<String, Integer> intersection = new HashMap<String, Integer>();
- 		
- 		for(Map.Entry<String, Integer> entry1: this.map.entrySet()){
-		
-			intersection.put(entry1.getKey(), entry1.getValue());
+		Map<String, Integer> difference = new HashMap<String, Integer>(map);
+		for (String term: that.map.keySet()) {
+			difference.remove(term);
 		}
-		
-		for(Map.Entry<String, Integer> entry2: that.map.entrySet()){
-			
-			Integer isDuplicate = intersection.get(entry2.getKey());
-			if(isDuplicate != null){
-				//System.out.println("remove: " + entry2.getKey());
-				intersection.remove(entry2.getKey());
-			}
-
-		}	
- 		
-//  		for(Map.Entry<String, Integer> entry: intersection.entrySet()){
-//  			
-//  			System.out.println(entry.getKey() + "   " + entry.getValue());
-//  		}
-		return new WikiSearch(intersection);
+		return new WikiSearch(difference);
 	}
 	
 	/**
@@ -164,35 +119,33 @@ public class WikiSearch {
 		return rel1 + rel2;
 	}
 
-// 	
-// 	public int compareTo(Entry<String, Integer> that){
-// 				
-// 		return this.Entry<String, Integer>.getValue() > that.getValue() ? 1 : (this.Entry<String, Integer>.getValue() < that.getValue() ? -1 : 0); 
-// 	}
-
-
 	/**
 	 * Sort the results by relevance.
 	 * 
 	 * @return List of entries with URL and relevance.
 	 */
 	public List<Entry<String, Integer>> sort() {
-		
-		List<Map.Entry<String, Integer>> list = new LinkedList<Map.Entry<String, Integer>>(this.map.entrySet());
+		// NOTE: this can be done more concisely in Java 8.  See
+		// http://stackoverflow.com/questions/109383/sort-a-mapkey-value-by-values-java
 
-		Comparator<Map.Entry<String, Integer>> comparator = new Comparator<Map.Entry<String, Integer>>() {
-            
-            @Override			
-			public int compare(Map.Entry<String, Integer> object1, Map.Entry<String, Integer> object2){
- 				
- 				return (object1.getValue()).compareTo(object2.getValue());
-			}
-		};
+		// make a list of entries
+		List<Entry<String, Integer>> entries = 
+				new LinkedList<Entry<String, Integer>>(map.entrySet());
 		
-		Collections.sort(list, comparator);
-		
-		return list;
+		// make a Comparator object for sorting
+		Comparator<Entry<String, Integer>> comparator = new Comparator<Entry<String, Integer>>() {
+            public int compare(Entry<String, Integer> e1, Entry<String, Integer> e2) {
+                //return e1.getValue().compareTo(e2.getValue());
+            	//Make the order to descending order
+            	return e2.getValue().compareTo(e1.getValue());
+            }
+        };
+        
+        // sort and return the entries
+		Collections.sort(entries, comparator);
+		return entries;
 	}
+
 
 	/**
 	 * Performs a search and makes a WikiSearch object.
@@ -206,43 +159,28 @@ public class WikiSearch {
 		return new WikiSearch(map);
 	}
 
-	public static void main(String[] args) throws IOException, GeneralSecurityException {
+	public static void main(String[] args) throws IOException {
 		
-		// make a JedisIndex
-// 		Jedis jedis = JedisMaker.make();
-// 		JedisIndex index = new JedisIndex(jedis); 
- 		
-// 		// search for the first term
-// 		String term1 = "java";
-// 		System.out.println("Query: " + term1);
-// 		WikiSearch search1 = search(term1, index);
-// 		search1.print();
-// 		
-// 		// search for the second term
-// 		String term2 = "programming";
-// 		System.out.println("Query: " + term2);
-// 		WikiSearch search2 = search(term2, index);
-// 		search2.print();
-// 		
-// 		// compute the intersection of the searches
-// 		System.out.println("Query: " + term1 + " AND " + term2);
-// 		WikiSearch intersection = search1.and(search2);
-// 		intersection.print();
+		// make a JedisIndex   -----> so that we can get access to the database(Redis) we have built
+		Jedis jedis = JedisMaker.make();
+		JedisIndex index = new JedisIndex(jedis); 
+		String[] test1 = {"philosophy","--or","java"};
+		new CommandParser(test1,index);
+		// search for the first term
+		/*String term1 = "java";
+		System.out.println("Query: " + term1);
+		WikiSearch search1 = search(term1, index);
+		search1.print();
 		
-// 		Jedis jedis = JedisMaker.make();
-// 		JedisIndex index = new JedisIndex(jedis); 		
-
-
- 		String image = "demo-image.jpg";
- 		Path imagePath = Paths.get(image);
- 		
- 		LabelApp query = new LabelApp(LabelApp.getVisionService(), imagePath);
- 		
- 		List<String> labelResults = query.printLabels(imagePath, query.labelImage(imagePath, 3));
+		// search for the second term
+		String term2 = "philosophy";
+		System.out.println("Query: " + term2);
+		WikiSearch search2 = search(term2, index);
+		search2.print();
 		
-		for(String la: labelResults){
-			System.out.println(la);
-		}
-		
+		// compute the intersection of the searches
+		System.out.println("Query: " + term1 + " AND " + term2);
+		WikiSearch intersection = search1.and(search2);
+		intersection.print(); */
 	}
 }
