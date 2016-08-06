@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.cloud.vision.samples.label;
+package com.codeu.team34.label;
 
 // [BEGIN import_libraries]
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -39,6 +39,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Comparator;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Arrays;
+
+
 // [END import_libraries]
 
 /**
@@ -50,9 +60,14 @@ public class LabelApp {
    * Be sure to specify the name of your application. If the application name is {@code null} or
    * blank, the application will log a warning. Suggested format is "MyCompany-ProductName/1.0".
    */
-  private static final String APPLICATION_NAME = "Google-VisionLabelSample/1.0";
+  private static final String APPLICATION_NAME = "Google-Team34/1.0";
 
   private static final int MAX_LABELS = 3;
+
+  Map<String, Double> labelList;
+  
+  private Path imagePath;
+  
 
   // [START run_application]
   /**
@@ -65,27 +80,65 @@ public class LabelApp {
       System.err.printf("\tjava %s imagePath\n", LabelApp.class.getCanonicalName());
       System.exit(1);
     }
-    Path imagePath = Paths.get(args[0]);
-
-    LabelApp app = new LabelApp(getVisionService());
-    printLabels(System.out, imagePath, app.labelImage(imagePath, MAX_LABELS));
+    Path imagePath1 = Paths.get("demo-image.jpg");
+	List<String> result;
+    LabelApp app = new LabelApp(getVisionService(), imagePath1);
+    result = app.printLabels(imagePath1, app.labelImage(imagePath1, MAX_LABELS));
   }
 
   /**
    * Prints the labels received from the Vision API.
    */
-  public static void printLabels(PrintStream out, Path imagePath, List<EntityAnnotation> labels) {
-    out.printf("Labels for image %s:\n", imagePath);
+  public List<String> printLabels(Path imagePath, List<EntityAnnotation> labels) {
+    //out.printf("Labels for image %s:\n", imagePath);
+    List<String> results = new ArrayList<String>();
     for (EntityAnnotation label : labels) {
-      out.printf(
-          "\t%s (score: %.3f)\n",
-          label.getDescription(),
-          label.getScore());
+//       out.printf(
+//           "\t%s (score: %.3f)\n",
+//           label.getDescription(),
+//           label.getScore());
+          labelList.put(label.getDescription(), Math.round(label.getScore() * 100.0) / 100.0);
+          results.add(label.getDescription());
     }
-    if (labels.isEmpty()) {
-      out.println("\tNo labels found.");
-    }
+//     if (labels.isEmpty()) {
+//       out.println("\tNo labels found.");
+//     }
+    
+    
+//     for(String la: labelList.keySet()){
+//     	
+//     	System.out.println("Label:  " + la + "    " + labelList.get(la));
+//     }
+    return results;
   }
+  
+  public Map<String, Double> sortMapByValues(Map<String, Double> passedMap) {
+    List<String> mapKeys = new ArrayList<>(passedMap.keySet());
+    List<Double> mapValues = new ArrayList<>(passedMap.values());
+    Collections.reverse(mapValues);
+    Collections.reverse(mapKeys);
+
+    Map<String, Double> sortedMap = new HashMap<>();
+
+    Iterator<Double> valueIt = mapValues.iterator();
+    while (valueIt.hasNext()) {
+        Double val = valueIt.next();
+        Iterator<String> keyIt = mapKeys.iterator();
+
+        while (keyIt.hasNext()) {
+            String key = keyIt.next();
+            Double comp1 = passedMap.get(key);
+            Double comp2 = val;
+
+            if (comp1.equals(comp2)) {
+                keyIt.remove();
+                sortedMap.put(key, val);
+                break;
+            }
+        }
+    }
+    return sortedMap;
+}
   // [END run_application]
 
   // [START authenticate]
@@ -107,8 +160,10 @@ public class LabelApp {
   /**
    * Constructs a {@link LabelApp} which connects to the Vision API.
    */
-  public LabelApp(Vision vision) {
+  public LabelApp(Vision vision, Path imagePath) {
     this.vision = vision;
+    this.imagePath = imagePath;
+    this.labelList = new HashMap<String, Double>();
   }
 
   /**
