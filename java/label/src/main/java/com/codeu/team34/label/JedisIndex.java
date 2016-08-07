@@ -154,7 +154,7 @@ public class JedisIndex {
 		Set<String> docSet = jedis.smembers(setKey);
 		int numDocsContaining = docSet.size();
 		
-		tfidf = (0.5+0.5*(tf/docSize))*Math.log(numDocs/numDocsContaining);
+		tfidf = (0.5+0.5*((double)tf/(double)docSize))*Math.log((double)numDocs/(double)numDocsContaining);
 		
 		return tfidf;
 	}
