@@ -13,6 +13,8 @@ import org.jsoup.select.Elements;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
 
+import java.lang.Math.*;
+
 /**
  * Represents a Redis-backed web search index.
  * 
@@ -86,11 +88,11 @@ public class JedisIndex {
 	 * @param term
 	 * @return Map from URL to count.
 	 */
-	public Map<String, Integer> getCounts(String term) {
-		Map<String, Integer> map = new HashMap<String, Integer>();
+	public Map<String, Double> getCounts(String term) {
+		Map<String, Double> map = new HashMap<String, Double>();
 		Set<String> urls = getURLs(term);
 		for (String url : urls) {
-			Integer count = getCount(url, term);
+			Double count = getCount(url, term);
 			map.put(url, count);
 		}
 		return map;
@@ -102,7 +104,7 @@ public class JedisIndex {
 	 * @param term
 	 * @return Map from URL to count.
 	 */
-	public Map<String, Integer> getCountsFaster(String term) {
+	public Map<String, Double> getCountsFaster(String term) {
 		// convert the set of strings to a list so we get the
 		// same traversal order every time
 		List<String> urls = new ArrayList<String>();
@@ -117,11 +119,11 @@ public class JedisIndex {
 		List<Object> res = t.exec();
 
 		// iterate the results and make the map
-		Map<String, Integer> map = new HashMap<String, Integer>();
+		Map<String, Double> map = new HashMap<String, Double>();
 		int i = 0;
 		for (String url : urls) {
 			System.out.println(url);
-			Integer count = new Integer((String) res.get(i++));
+			Double count = new Double((String) res.get(i++));
 			map.put(url, count);
 		}
 		return map;
@@ -134,10 +136,27 @@ public class JedisIndex {
 	 * @param term
 	 * @return
 	 */
-	public Integer getCount(String url, String term) {
+	public Double getCount(String url, String term) {
+		double tfidf = 0;
+		
 		String redisKey = termCounterKey(url);
+		String setKey = urlSetKey(term);
+		
 		String count = jedis.hget(redisKey, term);
-		return new Integer(count);
+		int tf = new Integer(count);
+		
+		Map<String,String> docMap = jedis.hgetAll(redisKey);
+		int docSize = docMap.size();
+		
+		Set<String> termSet = jedis.keys("TermCounter:*");
+		int numDocs = termSet.size();
+		
+		Set<String> docSet = jedis.smembers(setKey);
+		int numDocsContaining = docSet.size();
+		
+		tfidf = (0.5+0.5*(tf/docSize))*Math.log(numDocs/numDocsContaining);
+		
+		return tfidf;
 	}
 
 	/**
@@ -198,7 +217,7 @@ public class JedisIndex {
 			// for each term, print the pages where it appears
 			Set<String> urls = getURLs(term);
 			for (String url : urls) {
-				Integer count = getCount(url, term);
+				Double count = getCount(url, term);
 				System.out.println("    " + url + " " + count);
 			}
 		}
