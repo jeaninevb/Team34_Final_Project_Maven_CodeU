@@ -164,8 +164,8 @@ public class WikiSearch {
 		// make a JedisIndex   -----> so that we can get access to the database(Redis) we have built
 		Jedis jedis = JedisMaker.make();
 		JedisIndex index = new JedisIndex(jedis); 
-		String[] test1 = {"philosophy","--or","java"};
-		new CommandParser(test1,index);
+		//String[] test1 = {"philosophy","--or","java"};
+		new CommandParser(args,index);
 		// search for the first term
 		/*String term1 = "java";
 		System.out.println("Query: " + term1);

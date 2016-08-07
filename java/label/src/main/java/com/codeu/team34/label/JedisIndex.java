@@ -336,7 +336,8 @@ public class JedisIndex {
 				"https://en.wikipedia.org/wiki/Philosophy",
 				"https://en.wikipedia.org/wiki/Property_(philosophy)",
 				"https://en.wikipedia.org/wiki/Quality_(philosophy)",
-				"https://en.wikipedia.org/wiki/Science" };
+				"https://en.wikipedia.org/wiki/Science",
+				"https://en.wikipedia.org/wiki/Dog" };
 		index.deleteTermCounters();
 		index.deleteURLSets();
 		index.deleteAllKeys();

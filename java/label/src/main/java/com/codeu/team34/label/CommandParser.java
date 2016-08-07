@@ -48,25 +48,27 @@ public class CommandParser {
 		OptionSet options = parser.parse(args);
 
 		if (options.has(IMAGE_SOURCE)) {
+			List<String> labelResults=null;
 			// read this image's tags ---> Need to modify
-try{
-			String image = "demo-image.jpg";
- 		Path imagePath = Paths.get(image);
- 		
- 		LabelApp query = new LabelApp(LabelApp.getVisionService(), imagePath);
- 		
- 		List<String> labelResults = query.printLabels(imagePath, query.labelImage(imagePath, 3));
+		try{
+			String image = options.valuesOf(imageSource).get(0);
+ 			Path imagePath = Paths.get(image);
+ 			LabelApp query = new LabelApp(LabelApp.getVisionService(), imagePath);
+ 			labelResults = query.printLabels(imagePath, query.labelImage(imagePath, 3));
 		
-		for(String la: labelResults){
-			System.out.println(la);
+			System.out.print("image is about ");		
+			for(String la: labelResults){
+				System.out.print(la+" ");
+			}
+			System.out.print("\n");
+		}catch(Exception e){
+			System.out.println("something wrong with your image source..., bye-bye"); 
 		}
-}catch(Exception e){
- 
-}
-
-
-			// do normal search for the tags and the rest of the query words
-			parseQueryWords(args);// this args should be updated to args+tags
+			// do normal search for the tags and the rest of the query words with OR logic
+			if(labelResults!=null){
+				labelResults.add("--or");
+				parseQueryWords(labelResults.toArray(new String[0]));
+			}
 		} else {
 			parseQueryWords(args);
 		}
@@ -90,7 +92,7 @@ try{
 			// note that -or cannot be at the end because we don't know which
 			// words it wants to "or" with
 			int i = 0;
-			while (i < args.length - 1) {
+			while (i < args.length) {
 				if (args[i].equals("--or")) {
 					orSet.add(args[i + 1]);
 					i += 2;
@@ -123,7 +125,7 @@ try{
 				// note that -or cannot be at the end because we don't know which
 				// words it wants to "or" with
 				int i = 0;
-				while (i < args.length - 1) {
+				while (i < args.length) {
 					if (args[i].equals("--or")) {
 						orSet.add(args[i + 1]);
 						i += 2;
