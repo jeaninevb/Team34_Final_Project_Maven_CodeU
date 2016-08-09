@@ -349,9 +349,15 @@ public class JedisIndex {
 		Set<String> keys = jedis.keys("*");
 		Transaction t = jedis.multi();
 		for (String key : keys) {
-			if(!urlList.contains(key.substring(12)) &&
+			if(key.length() > 7 &&
 					!Arrays.asList(args).contains(key.substring(7))) {
-				t.del(key);
+				if(key.length() > 12) {
+					if(!urlList.contains(key.substring(12))) {
+						t.del(key);
+					}
+				} else {
+					t.del(key);
+				}
 			}
 		}
 		t.exec();
