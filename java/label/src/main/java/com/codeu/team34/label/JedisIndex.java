@@ -312,7 +312,7 @@ public class JedisIndex {
 		Set<String> keys = urlSetKeys();
 		Transaction t = jedis.multi();
 		for (String key : keys) {
-			if(!args.contains(key.substring(7))) {
+			if(!Arrays.asList(args).contains(key.substring(7))) {
 				t.del(key);
 			}
 		}
@@ -349,7 +349,7 @@ public class JedisIndex {
 		Transaction t = jedis.multi();
 		for (String key : keys) {
 			if(!urlList.contains(key.substring(12)) &&
-					!args.contains(key.substring(7))) {
+					!Arrays.asList(args).contains(key.substring(7))) {
 				t.del(key);
 			}
 		}
