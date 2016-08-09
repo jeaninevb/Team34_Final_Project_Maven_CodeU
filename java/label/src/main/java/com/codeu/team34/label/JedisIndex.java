@@ -222,7 +222,10 @@ public class JedisIndex {
 		// if this page has already been indexed; delete the old hash
 		t.del(hashname);
 		
-		System.out.println(jedis.info("memory"));
+		System.out.println("Jedis "jedis.info("memory"));
+		deleteTermCounters();
+		deleteURLSets();
+		deleteAllKeys();
 
 		// for each term, add an entry in the termcounter and a new
 		// member of the index
@@ -452,9 +455,6 @@ public class JedisIndex {
 				break;
 			}
 		}
-		deleteTermCounters();
-		deleteURLSets();
-		deleteAllKeys();
 		System.out.println("Indexing URLs");
 		loadIndex(urlList);
 		System.out.println("Done Indexing URLs");
