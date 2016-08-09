@@ -115,6 +115,9 @@ public class CommandParser {
 		} else if (!options.has(AND) && options.has(OR)) {
 			if (args[args.length-1]=="--or") {
 				WikiSearchResult result = searchMultiterms(options.valuesOf(queryWords), OR);
+				
+				System.out.println("I am here!");
+
 				System.out.println("=====================");
 				System.out.println(result.getQuery());
 				result.getWs().print();

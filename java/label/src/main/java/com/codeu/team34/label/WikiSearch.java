@@ -15,6 +15,8 @@ import java.security.GeneralSecurityException;
 import com.codeu.team34.label.LabelApp;
 import redis.clients.jedis.Jedis;
 
+import java.util.Arrays;
+
 
 /**
  * Represents the results of a search query.
@@ -160,12 +162,15 @@ public class WikiSearch {
 	}
 
 	public static void main(String[] args) throws IOException {
-		
 		// make a JedisIndex   -----> so that we can get access to the database(Redis) we have built
 		Jedis jedis = JedisMaker.make();
 		JedisIndex index = new JedisIndex(jedis); 
 		//String[] test1 = {"philosophy","--or","java"};
-		new CommandParser(args,index);
+		if(Arrays.toString(args)!="[]"){
+			new CommandParser(args,index);
+		}else{
+			System.out.println("Please input something... Bye-bye.");
+		}
 		// search for the first term
 		/*String term1 = "java";
 		System.out.println("Query: " + term1);
