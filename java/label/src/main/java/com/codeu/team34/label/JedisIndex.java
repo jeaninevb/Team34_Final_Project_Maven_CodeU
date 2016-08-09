@@ -25,6 +25,11 @@ import redis.clients.jedis.Transaction;
 
 import java.lang.Math.*;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 /**
  * Represents a Redis-backed web search index.
  * 
@@ -202,14 +207,28 @@ public class JedisIndex {
 
 		// if this page has already been indexed; delete the old hash
 		t.del(hashname);
+		
+		List<String> stopList = new ArrayList<String>();
+		try{
+			String  thisLine = ""
+			// open input stream test.txt for reading purpose.
+			BufferedReader br = new BufferedReader("./en.txt");
+			while ((thisLine = br.readLine()) != null) {
+				stopList.add(thisLine);
+			}       
+	      }catch(Exception e){
+	         e.printStackTrace();
+	      }
 
 		// for each term, add an entry in the termcounter and a new
 		// member of the index
 		for (String term : tc.keySet()) {
 			System.out.println(url+" - "+term);
-			Integer count = tc.get(term);
-			t.hset(hashname, term, count.toString());
-			t.sadd(urlSetKey(term), url);
+			if(!stopList.contains(term)) {
+				Integer count = tc.get(term);
+				t.hset(hashname, term, count.toString());
+				t.sadd(urlSetKey(term), url);
+			}
 		}
 		List<Object> res = t.exec();
 		return res;
