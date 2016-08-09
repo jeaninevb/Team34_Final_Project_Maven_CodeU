@@ -429,7 +429,9 @@ public class JedisIndex {
 		deleteTermCounters();
 		deleteURLSets();
 		deleteAllKeys();
+		System.out.println("Start load");
 		loadIndex(urlList);
+		System.out.println("Done");
 	}
 
 
