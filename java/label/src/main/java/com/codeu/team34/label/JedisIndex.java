@@ -330,6 +330,7 @@ public class JedisIndex {
 		String PortalUrl = "https://en.wikipedia.org/wiki/Portal:" + query;
 		
 		try{
+			sleepIfNeeded();
 			Document doc = Jsoup.connect(PortalUrl).get();
 			Element content = doc.getElementById("mw-content-text");
         	Elements links = doc.select("a[href]");
@@ -361,6 +362,7 @@ public class JedisIndex {
 		String wikiUrl = "https://en.wikipedia.org/wiki/" + query;
 		
 		try {
+			sleepIfNeeded();
 			Document doc = Jsoup.connect(wikiUrl).get();
 			Element content = doc.getElementById("mw-content-text");
         	Elements links = doc.select("a[href]");
@@ -390,6 +392,7 @@ public class JedisIndex {
 		String PortalUrl = "https://en.wikipedia.org/wiki/Portal:" + term;
 		
 		try{
+			sleepIfNeeded();
 			Document doc = Jsoup.connect(PortalUrl).get();
 			String html = doc.body().toString();
 			if(html.toLowerCase().indexOf("Wikipedia does not have a") != -1 &&
