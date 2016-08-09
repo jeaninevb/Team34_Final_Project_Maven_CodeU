@@ -390,7 +390,7 @@ public class JedisIndex {
 	
 	}
 	
-	private static boolean portalExists(String term) {
+	private boolean portalExists(String term) {
 		String PortalUrl = "https://en.wikipedia.org/wiki/Portal:" + term;
 		
 		try{
