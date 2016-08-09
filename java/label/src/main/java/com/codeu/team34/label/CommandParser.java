@@ -177,7 +177,7 @@ public class CommandParser {
 		System.out.println("***************WIKIMEDIA SEARCH***************");
 
 		WikiMedia wm = new WikiMedia(options.valuesOf(queryWords));
-		wm.fectchMedia();
+		wm.fetchMedia();
 		wm.print();
 
 		System.out.println("End Searching...");
