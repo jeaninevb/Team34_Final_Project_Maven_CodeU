@@ -166,7 +166,7 @@ public class WikiSearch {
 		Jedis jedis = JedisMaker.make();
 		JedisIndex index = new JedisIndex(jedis); 
 		//String[] test1 = {"philosophy","--or","java"};
-		if(Arrays.toString(args)!="[]"){
+		if(args.length>=1){
 			new CommandParser(args,index);
 		}else{
 			System.out.println("Please input something... Bye-bye.");
