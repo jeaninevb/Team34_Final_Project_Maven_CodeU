@@ -120,7 +120,7 @@ Copyright 2016 Google Inc. All Rights Reserved.
         <configuration>
           <archive>
             <manifest>
-              <mainClass>com.codeu.team34.label.LabelApp</mainClass>
+              <mainClass>com.codeu.team34.label.WikiSearch</mainClass>
             </manifest>
           </archive>
           <descriptorRefs>
