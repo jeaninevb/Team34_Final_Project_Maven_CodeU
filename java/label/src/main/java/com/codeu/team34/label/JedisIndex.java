@@ -178,8 +178,6 @@ public class JedisIndex {
 	 *            Collection of elements that should be indexed.
 	 */
 	public void indexPage(String url, Elements paragraphs) {
-		System.out.println("Indexing " + url);
-
 		// make a TermCounter and count the terms in the paragraphs
 		TermCounter tc = new TermCounter(url);
 		tc.processElements(paragraphs);
@@ -341,7 +339,6 @@ public class JedisIndex {
 				if(link.attr("href").contains("/wiki/")){
 					
 					String linkUrl = "https://en.wikipedia.org" + link.attr("href");
-					System.out.println("Portal link: "+linkUrl);
 					portalList.add(linkUrl);
 				}
 			}  
@@ -374,7 +371,6 @@ public class JedisIndex {
 					
 					if(link.attr("href").toLowerCase().indexOf(query.toLowerCase()) != -1) {
 						String linkUrl = "https://en.wikipedia.org" + link.attr("href");
-						System.out.println("Wiki link: "+linkUrl);
 						portalList.add(linkUrl);
 					}
 				}
@@ -403,7 +399,7 @@ public class JedisIndex {
 				return false;
 			}
 		} catch(IOException e){
-			System.out.println("Could not connect to the url");
+			return false;
 		}
 		return false;
 	}
