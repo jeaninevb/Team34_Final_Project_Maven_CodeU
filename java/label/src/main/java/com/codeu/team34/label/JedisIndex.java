@@ -25,9 +25,6 @@ import redis.clients.jedis.Transaction;
 
 import java.lang.Math.*;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 /**
  * Represents a Redis-backed web search index.
  * 
@@ -344,7 +341,7 @@ public class JedisIndex {
 				if(link.attr("href").contains("/wiki/")){
 					
 					String linkUrl = "https://en.wikipedia.org" + link.attr("href");
-					
+					System.out.println("Portal link: "+linkUrl);
 					portalList.add(linkUrl);
 				}
 			}  
@@ -377,7 +374,7 @@ public class JedisIndex {
 					
 					if(link.attr("href").toLowerCase().indexOf(query.toLowerCase()) != -1) {
 						String linkUrl = "https://en.wikipedia.org" + link.attr("href");
-						
+						System.out.println("Wiki link: "+linkUrl);
 						portalList.add(linkUrl);
 					}
 				}
@@ -398,11 +395,14 @@ public class JedisIndex {
 		try{
 			Document doc = Jsoup.connect(PortalUrl).get();
 			String html = doc.body().toString(); 
+			System.out.println("exists?");
 			if(html.toLowerCase().indexOf("Wikipedia does not have a") != -1 &&
 					html.toLowerCase().indexOf("portal") != -1 &&
 					html.toLowerCase().indexOf("with this exact name.") != -1) {
+				System.out.println("true");
 				return true;
 			} else {
+				System.out.println("false");
 				return false;
 			}
 		} catch(IOException e){
@@ -413,16 +413,10 @@ public class JedisIndex {
 	
 	public void loadDB(String[] args) throws IOException{
 		List<String> urlList = new ArrayList<String>();
-		String pattern = "^--";
-		Matcher m;
-		
-		// Create a Pattern object
-	    Pattern r = Pattern.compile(pattern);
 		
 		for(int i=1; i<args.length; i++) {
 			String term = args[i];
-		    m = r.matcher(term);
-			if(!m.find()) {
+			if(!(term.toLowerCase().indexOf("--") == 0)) {
 				if(portalExists(term)) {
 					urlList.addAll(loadPortal(term));
 				} else {
