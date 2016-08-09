@@ -206,6 +206,7 @@ public class JedisIndex {
 		// for each term, add an entry in the termcounter and a new
 		// member of the index
 		for (String term : tc.keySet()) {
+			System.out.println(url+" - "+term);
 			Integer count = tc.get(term);
 			t.hset(hashname, term, count.toString());
 			t.sadd(urlSetKey(term), url);
@@ -420,7 +421,7 @@ public class JedisIndex {
 					urlList.addAll(loadWiki(term));
 				}
 			}
-			if(urlList.size() >= 200) {
+			if(urlList.size() >= 100) {
 				break;
 			}
 		}
