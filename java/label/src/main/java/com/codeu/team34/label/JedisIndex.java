@@ -401,7 +401,6 @@ public class JedisIndex {
 		} catch(IOException e){
 			return false;
 		}
-		return false;
 	}
 	
 	public void loadDB(String[] args) throws IOException{
