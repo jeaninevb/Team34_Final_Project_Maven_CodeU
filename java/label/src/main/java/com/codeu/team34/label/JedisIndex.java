@@ -222,7 +222,7 @@ public class JedisIndex {
 		// if this page has already been indexed; delete the old hash
 		t.del(hashname);
 		
-		System.out.println("Jedis "jedis.info("memory"));
+		System.out.println("Jedis "+jedis.info("memory"));
 		deleteTermCounters();
 		deleteURLSets();
 		deleteAllKeys();
