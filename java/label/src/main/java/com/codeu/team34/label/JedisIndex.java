@@ -465,7 +465,7 @@ public class JedisIndex {
 		index.deleteTermCounters();
 		index.deleteURLSets();
 		index.deleteAllKeys();
-		loadIndex(index, urls);
+		loadIndex(urls);
 
 		//Map<String, Integer> map = index.getCountsFaster("the");
 		//for (Entry<String, Integer> entry : map.entrySet()) {
@@ -479,7 +479,7 @@ public class JedisIndex {
 	 * @return
 	 * @throws IOException
 	 */
-	private static void loadIndex(JedisIndex index, List<String> urls)
+	private void loadIndex(List<String> urls)
 			throws IOException {
 		WikiFetcher wf = new WikiFetcher();
 
@@ -493,7 +493,7 @@ public class JedisIndex {
 
 		for (String url : urls) {
 			Elements paragraphs = wf.fetchWikipedia(url);
-			index.indexPage(url, paragraphs);
+			indexPage(url, paragraphs);
 		}
 
 	}
