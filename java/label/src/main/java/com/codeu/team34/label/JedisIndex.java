@@ -397,9 +397,9 @@ public class JedisIndex {
 			if(html.toLowerCase().indexOf("Wikipedia does not have a") != -1 &&
 					html.toLowerCase().indexOf("portal") != -1 &&
 					html.toLowerCase().indexOf("with this exact name.") != -1) {
-				return true;
-			} else {
 				return false;
+			} else {
+				return true;
 			}
 		} catch(IOException e){
 			return false;
