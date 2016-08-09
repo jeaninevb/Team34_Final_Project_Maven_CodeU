@@ -40,6 +40,7 @@ public class JedisIndex {
 	private Jedis jedis;
 	private long lastRequestTime = -1;
 	private long minInterval = 1000;
+	private List<String> stopList;
 
 	/**
 	 * Constructor.
@@ -48,6 +49,18 @@ public class JedisIndex {
 	 */
 	public JedisIndex(Jedis jedis) {
 		this.jedis = jedis;
+		
+		stopList = new ArrayList<String>();
+		try{
+			String  thisLine = "";
+			// open input stream test.txt for reading purpose.
+			BufferedReader br = new BufferedReader(new FileReader("./en.txt"));
+			while ((thisLine = br.readLine()) != null) {
+				stopList.add(thisLine);
+			}       
+	      }catch(Exception e){
+	         e.printStackTrace();
+	      }
 	}
 
 	/**
@@ -209,17 +222,7 @@ public class JedisIndex {
 		// if this page has already been indexed; delete the old hash
 		t.del(hashname);
 		
-		List<String> stopList = new ArrayList<String>();
-		try{
-			String  thisLine = "";
-			// open input stream test.txt for reading purpose.
-			BufferedReader br = new BufferedReader(new FileReader("./en.txt"));
-			while ((thisLine = br.readLine()) != null) {
-				stopList.add(thisLine);
-			}       
-	      }catch(Exception e){
-	         e.printStackTrace();
-	      }
+		System.out.println(jedis.info("memory"));
 
 		// for each term, add an entry in the termcounter and a new
 		// member of the index
@@ -362,7 +365,6 @@ public class JedisIndex {
 				
 				if(link.attr("href").toLowerCase().indexOf("/wiki/") == 0 &&
 						!link.attr("href").contains(":")){
-					System.out.println("portal: "+link.attr("href"));
 					String linkUrl = "https://en.wikipedia.org" + link.attr("href");
 					portalList.add(linkUrl);
 				}
@@ -397,7 +399,6 @@ public class JedisIndex {
 				if(link.attr("href").toLowerCase().indexOf("/wiki/") == 0){
 					
 					if(link.attr("href").toLowerCase().indexOf(query.toLowerCase()) != -1) {
-						System.out.println("wiki: "+link.attr("href"));
 						String linkUrl = "https://en.wikipedia.org" + link.attr("href");
 						wikiList.add(linkUrl);
 					}
@@ -447,16 +448,16 @@ public class JedisIndex {
 					urlList.addAll(loadWiki(term));
 				}
 			}
-			if(urlList.size() >= 50) {
+			if(urlList.size() >= 125) {
 				break;
 			}
 		}
 		deleteTermCounters();
 		deleteURLSets();
 		deleteAllKeys();
-		System.out.println("Start load");
+		System.out.println("Indexing URLs");
 		loadIndex(urlList);
-		System.out.println("Done");
+		System.out.println("Done Indexing URLs");
 	}
 
 
