@@ -13,16 +13,18 @@ import org.jsoup.select.Elements;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class WikiMedia {
 
-	private List<String> mediaUrls;
+	private Map<String,String>  mediaUrls;
 	private List<String> args;
 	
 	public WikiMedia(List<String> args) {
 		this.args = args;
-		this.mediaUrls = new ArrayList<String>();
+		this.mediaUrls = new HashMap<String,String>();
 	
 	}
 	
@@ -46,14 +48,24 @@ public class WikiMedia {
 			doc = Jsoup.connect(url).get();
 			Element content = doc.getElementById("mw-content-text");
         	Elements media = doc.select("[src]");
-				
+			
+			//int idx=1;
 			for(Element src: media){
 				
 				if (src.tagName().equals("img")){
-					
-					mediaUrls.add(src.attr("abs:src"));
-										
-					
+					String newurl = src.attr("abs:src");
+					if(!newurl.equals("") && newurl.contains("upload") && !newurl.contains("System-search") && !newurl.contains("Wikimedia-logo")){
+						String imageKey = "";
+						
+						String[] tokens = newurl.split("/");
+						if(tokens.length>=1){
+							imageKey = tokens[tokens.length-2];
+						}
+							//System.out.println(idx+": "+newurl);
+							//mediaUrls.put(idx+imageKey,newurl);			
+							//idx++;
+						mediaUrls.put(imageKey,newurl);	
+					}						
 				}
 			}  
 		}
@@ -67,9 +79,9 @@ public class WikiMedia {
 	
 	public void print(){
 	
-		for(String url: mediaUrls){
+		for(String imageKey: mediaUrls.keySet()){
 		
-			System.out.println(url);
+			System.out.println(imageKey+" ==== "+mediaUrls.get(imageKey));
 		}
 	}	
 // 
