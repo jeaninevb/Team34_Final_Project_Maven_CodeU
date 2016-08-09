@@ -218,7 +218,6 @@ public class JedisIndex {
 	 * @return List of return values from Redis.
 	 */
 	public List<Object> pushTermCounterToRedis(TermCounter tc) {
-		Transaction t = jedis.multi();
 
 		String url = tc.getLabel();
 		String hashname = termCounterKey(url);
@@ -227,6 +226,7 @@ public class JedisIndex {
 		//t.del(hashname);
 
 		if(!isIndexed(url)) {
+			Transaction t = jedis.multi();
 			// for each term, add an entry in the termcounter and a new
 			// member of the index
 			for (String term : tc.keySet()) {
