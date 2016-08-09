@@ -25,6 +25,9 @@ import redis.clients.jedis.Transaction;
 
 import java.lang.Math.*;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Represents a Redis-backed web search index.
  * 
@@ -326,14 +329,13 @@ public class JedisIndex {
 
 
 
-	public List<String> loadPortal(String query){
+	private List<String> loadPortal(String query){
 		
 		List<String> portalList = new ArrayList<String>();
 		String PortalUrl = "https://en.wikipedia.org/wiki/Portal:" + query;
 		
-		Document doc = null;
 		try{
-			doc = Jsoup.connect(PortalUrl).get();
+			Document doc = Jsoup.connect(PortalUrl).get();
 			Element content = doc.getElementById("mw-content-text");
         	Elements links = doc.select("a[href]");
 				
@@ -352,10 +354,86 @@ public class JedisIndex {
 			System.out.println("Could not connect to the url");
 		}
 
+		portalList.add(PortalUrl);
 		
 		return portalList;
 	
 	
+	}
+	
+	private List<String> loadWiki(String query){
+		
+		List<String> portalList = new ArrayList<String>();
+		String PortalUrl = "https://en.wikipedia.org/wiki/" + query;
+		
+		try {
+			Document doc = Jsoup.connect(PortalUrl).get();
+			Element content = doc.getElementById("mw-content-text");
+        	Elements links = doc.select("a[href]");
+				
+			for(Element link: links){
+				
+				if(link.attr("href").contains("/wiki/")){
+					
+					if(link.attr("href").toLowerCase().indexOf(query.toLowerCase()) != -1) {
+						String linkUrl = "https://en.wikipedia.org" + link.attr("href");
+						
+						portalList.add(linkUrl);
+					}
+				}
+			}  
+		} catch(IOException e) {
+			System.out.println("Could not connect to the url");
+		}
+
+		
+		return portalList;
+	
+	
+	}
+	
+	private static boolean portalExists(String term) {
+		String PortalUrl = "https://en.wikipedia.org/wiki/Portal:" + query;
+		
+		try{
+			Document doc = Jsoup.connect(PortalUrl).get();
+			String html = doc.body().toString(); 
+			if(html.toLowerCase().indexOf("Wikipedia does not have a") != -1 &&
+					html.toLowerCase().indexOf("portal") != -1 &&
+					html.toLowerCase().indexOf("with this exact name.") != -1) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch(IOException e){
+			System.out.println("Could not connect to the url");
+		}
+	}
+	
+	public void loadDB(String[] args) {
+		List<String> urlList = new ArrayList<String>();
+		String pattern = "^--";
+		Matcher m;
+		
+		// Create a Pattern object
+	    Pattern r = Pattern.compile(pattern);
+		
+		for(int i=1; i<args.length; i++) {
+			String term = args[i];
+		    m = r.matcher(term);
+			if(!m.find()) {
+				if(portalExists(term)) {
+					urlList.addAll(loadPortal(term));
+				} else {
+					urlList.addAll(loadWiki(term));
+				}
+			}
+		}
+		
+		deleteTermCounters();
+		deleteURLSets();
+		deleteAllKeys();
+		loadIndex(index, urlList);
 	}
 
 
@@ -401,7 +479,7 @@ public class JedisIndex {
 	 * @return
 	 * @throws IOException
 	 */
-	private static void loadIndex(JedisIndex index, String[] urls)
+	private static void loadIndex(JedisIndex index, List<String> urls)
 			throws IOException {
 		WikiFetcher wf = new WikiFetcher();
 
