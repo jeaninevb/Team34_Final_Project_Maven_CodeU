@@ -32,6 +32,8 @@ import java.lang.Math.*;
 public class JedisIndex {
 
 	private Jedis jedis;
+	private long lastRequestTime = -1;
+	private long minInterval = 1000;
 
 	/**
 	 * Constructor.
@@ -487,6 +489,25 @@ public class JedisIndex {
 			indexPage(url, paragraphs);
 		}
 
+	}
+	
+	/**
+	 * Rate limits by waiting at least the minimum interval between requests.
+	 */
+	private void sleepIfNeeded() {
+		if (lastRequestTime != -1) {
+			long currentTime = System.currentTimeMillis();
+			long nextRequestTime = lastRequestTime + minInterval;
+			if (currentTime < nextRequestTime) {
+				try {
+					//System.out.println("Sleeping until " + nextRequestTime);
+					Thread.sleep(nextRequestTime - currentTime);
+				} catch (InterruptedException e) {
+					System.err.println("Warning: sleep interrupted in fetchWikipedia.");
+				}
+			}
+		}
+		lastRequestTime = System.currentTimeMillis();
 	}
 
 }
