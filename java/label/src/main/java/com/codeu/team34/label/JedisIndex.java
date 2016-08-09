@@ -393,7 +393,7 @@ public class JedisIndex {
 	}
 	
 	private static boolean portalExists(String term) {
-		String PortalUrl = "https://en.wikipedia.org/wiki/Portal:" + query;
+		String PortalUrl = "https://en.wikipedia.org/wiki/Portal:" + term;
 		
 		try{
 			Document doc = Jsoup.connect(PortalUrl).get();
@@ -433,7 +433,7 @@ public class JedisIndex {
 		deleteTermCounters();
 		deleteURLSets();
 		deleteAllKeys();
-		loadIndex(index, urlList);
+		loadIndex(urlList);
 	}
 
 
