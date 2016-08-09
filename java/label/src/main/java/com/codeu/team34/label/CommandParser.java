@@ -45,7 +45,13 @@ public class CommandParser {
 	}
 
 	private void process(String[] args) {
-		OptionSet options = parser.parse(args);
+		OptionSet options =null;
+		try{
+			options = parser.parse(args);
+		}catch(Exception e){
+			System.out.println("Inputs contains -- which is not an option that can be choose. Bye-bye.");
+			return;
+		}
 
 		if (options.has(IMAGE_SOURCE)) {
 			List<String> labelResults=null;
@@ -63,6 +69,7 @@ public class CommandParser {
 			System.out.print("\n");
 		}catch(Exception e){
 			System.out.println("something wrong with your image source..., bye-bye"); 
+			return;
 		}
 			// do normal search for the tags and the rest of the query words with OR logic
 			if(labelResults!=null){
@@ -113,11 +120,8 @@ public class CommandParser {
 			result.getWs().print();
 			System.out.println("=====================");
 		} else if (!options.has(AND) && options.has(OR)) {
-			if (args[args.length-1]=="--or") {
+			if (args[args.length-1].equals("--or")) {
 				WikiSearchResult result = searchMultiterms(options.valuesOf(queryWords), OR);
-				
-				System.out.println("I am here!");
-
 				System.out.println("=====================");
 				System.out.println(result.getQuery());
 				result.getWs().print();
