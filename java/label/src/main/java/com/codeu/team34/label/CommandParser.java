@@ -93,6 +93,10 @@ public class CommandParser {
 	private void parseQueryWords(String[] args) {
 		OptionSet options = parser.parse(args);
 		System.out.println("Start Searching...");
+
+		//Wikipedia Search
+		System.out.println("***************WIKIPEDIA SEARCH***************");
+
 		if (options.has(AND) && options.has(OR)) {
 			List<String> andSet = new ArrayList<String>();
 			List<String> orSet = new ArrayList<String>();
@@ -168,6 +172,13 @@ public class CommandParser {
 			result.getWs().print();
 			System.out.println("=====================");
 		}
+
+		//Wikipedia Search
+		System.out.println("***************WIKIMEDIA SEARCH***************");
+
+		WikiMedia wm = new WikiMedia(options.valuesOf(queryWords));
+		wm.print();
+
 		System.out.println("End Searching...");
 	}
 
