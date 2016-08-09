@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import java.util.ArrayList;
-import java.util.ArrayList.contains;
+import java.util.ArrayList.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +31,8 @@ import java.io.FileReader;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
+import java.lang.String.*;
 
 /**
  * Represents a Redis-backed web search index.
