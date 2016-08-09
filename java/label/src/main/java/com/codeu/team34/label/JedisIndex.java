@@ -8,7 +8,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Transaction;
@@ -313,6 +323,42 @@ public class JedisIndex {
 		}
 		t.exec();
 	}
+
+
+
+	public List<String> loadPortal(String query){
+		
+		List<String> portalList = new ArrayList<String>();
+		String PortalUrl = "https://en.wikipedia.org/wiki/Portal:" + query;
+		
+		Document doc = null;
+		try{
+			doc = Jsoup.connect(PortalUrl).get();
+			Element content = doc.getElementById("mw-content-text");
+        	Elements links = doc.select("a[href]");
+				
+			for(Element link: links){
+				
+				if(link.attr("href").contains("/wiki/")){
+					
+					String linkUrl = "https://en.wikipedia.org" + link.attr("href");
+					
+					portalList.add(linkUrl);
+				}
+			}  
+		}
+		
+		catch(IOException e){
+			System.out.println("Could not connect to the url");
+		}
+
+		
+		return portalList;
+	
+	
+	}
+
+
 
 	/**
 	 * @param args
