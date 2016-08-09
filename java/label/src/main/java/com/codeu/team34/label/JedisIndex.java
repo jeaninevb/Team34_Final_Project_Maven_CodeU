@@ -366,9 +366,9 @@ public class JedisIndex {
 					String linkUrl = "https://en.wikipedia.org" + link.attr("href");
 					portalList.add(linkUrl);
 				}
-			}
-			if(portalList.size() >= 50) {
-				break;
+				if(portalList.size() >= 25) {
+					break;
+				}
 			}
 		}
 		
@@ -402,7 +402,7 @@ public class JedisIndex {
 						wikiList.add(linkUrl);
 					}
 				}
-				if(wikiList.size() >= 50) {
+				if(wikiList.size() >= 25) {
 					break;
 				}
 			}  
