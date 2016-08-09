@@ -337,7 +337,7 @@ public class JedisIndex {
 			for(Element link: links){
 				
 				if(link.attr("href").contains("/wiki/")){
-					
+					System.out.println(link.attr("href"));
 					String linkUrl = "https://en.wikipedia.org" + link.attr("href");
 					portalList.add(linkUrl);
 				}
@@ -370,6 +370,7 @@ public class JedisIndex {
 				if(link.attr("href").contains("/wiki/")){
 					
 					if(link.attr("href").toLowerCase().indexOf(query.toLowerCase()) != -1) {
+						System.out.println(link.attr("href"));
 						String linkUrl = "https://en.wikipedia.org" + link.attr("href");
 						portalList.add(linkUrl);
 					}
