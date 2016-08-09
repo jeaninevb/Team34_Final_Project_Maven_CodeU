@@ -408,9 +408,10 @@ public class JedisIndex {
 		} catch(IOException e){
 			System.out.println("Could not connect to the url");
 		}
+		return false;
 	}
 	
-	public void loadDB(String[] args) {
+	public void loadDB(String[] args) throws IOException{
 		List<String> urlList = new ArrayList<String>();
 		String pattern = "^--";
 		Matcher m;
@@ -429,7 +430,6 @@ public class JedisIndex {
 				}
 			}
 		}
-		
 		deleteTermCounters();
 		deleteURLSets();
 		deleteAllKeys();
@@ -443,34 +443,35 @@ public class JedisIndex {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		Jedis jedis = JedisMaker.make();
-		JedisIndex index = new JedisIndex(jedis);
+// 		Jedis jedis = JedisMaker.make();
+// 		JedisIndex index = new JedisIndex(jedis);
 		
 		//initiate our redis database
-		String[] urls = {
-				"https://en.wikipedia.org/wiki/Java_(programming_language)",
-				"https://en.wikipedia.org/wiki/Programming_language",
-				"https://en.wikipedia.org/wiki/Awareness",
-				"https://en.wikipedia.org/wiki/Computer_science",
-				"https://en.wikipedia.org/wiki/Concurrent_computing",
-				"https://en.wikipedia.org/wiki/Consciousness",
-				"https://en.wikipedia.org/wiki/Knowledge",
-				"https://en.wikipedia.org/wiki/Mathematics",
-				"https://en.wikipedia.org/wiki/Modern_philosophy",
-				"https://en.wikipedia.org/wiki/Philosophy",
-				"https://en.wikipedia.org/wiki/Property_(philosophy)",
-				"https://en.wikipedia.org/wiki/Quality_(philosophy)",
-				"https://en.wikipedia.org/wiki/Science",
-				"https://en.wikipedia.org/wiki/Dog" };
-		index.deleteTermCounters();
-		index.deleteURLSets();
-		index.deleteAllKeys();
-		loadIndex(urls);
+// 		String[] urls = {
+// 				"https://en.wikipedia.org/wiki/Java_(programming_language)",
+// 				"https://en.wikipedia.org/wiki/Programming_language",
+// 				"https://en.wikipedia.org/wiki/Awareness",
+// 				"https://en.wikipedia.org/wiki/Computer_science",
+// 				"https://en.wikipedia.org/wiki/Concurrent_computing",
+// 				"https://en.wikipedia.org/wiki/Consciousness",
+// 				"https://en.wikipedia.org/wiki/Knowledge",
+// 				"https://en.wikipedia.org/wiki/Mathematics",
+// 				"https://en.wikipedia.org/wiki/Modern_philosophy",
+// 				"https://en.wikipedia.org/wiki/Philosophy",
+// 				"https://en.wikipedia.org/wiki/Property_(philosophy)",
+// 				"https://en.wikipedia.org/wiki/Quality_(philosophy)",
+// 				"https://en.wikipedia.org/wiki/Science",
+// 				"https://en.wikipedia.org/wiki/Dog" };
+// 		index.deleteTermCounters();
+// 		index.deleteURLSets();
+// 		index.deleteAllKeys();
+// 		loadIndex(urls);
 
 		//Map<String, Integer> map = index.getCountsFaster("the");
 		//for (Entry<String, Integer> entry : map.entrySet()) {
 		//	System.out.println(entry);
 		//}
+		
 	}
 
 	/**
