@@ -218,6 +218,7 @@ public class JedisIndex {
 	 * @return List of return values from Redis.
 	 */
 	public List<Object> pushTermCounterToRedis(TermCounter tc) {
+		List<Object> res;
 
 		String url = tc.getLabel();
 		String hashname = termCounterKey(url);
@@ -236,8 +237,8 @@ public class JedisIndex {
 					t.sadd(urlSetKey(term), url);
 				}
 			}
+			List<Object> res = t.exec();
 		}
-		List<Object> res = t.exec();
 		return res;
 	}
 
