@@ -366,7 +366,10 @@ public class JedisIndex {
 					String linkUrl = "https://en.wikipedia.org" + link.attr("href");
 					portalList.add(linkUrl);
 				}
-			}  
+			}
+			if(portalList.size() >= 50) {
+				break;
+			}
 		}
 		
 		catch(IOException e){
@@ -398,6 +401,9 @@ public class JedisIndex {
 						String linkUrl = "https://en.wikipedia.org" + link.attr("href");
 						wikiList.add(linkUrl);
 					}
+				}
+				if(wikiList.size() >= 50) {
+					break;
 				}
 			}  
 		} catch(IOException e) {
@@ -441,7 +447,7 @@ public class JedisIndex {
 					urlList.addAll(loadWiki(term));
 				}
 			}
-			if(urlList.size() >= 100) {
+			if(urlList.size() >= 50) {
 				break;
 			}
 		}
