@@ -337,7 +337,7 @@ public class JedisIndex {
 			for(Element link: links){
 				
 				if(link.attr("href").contains("/wiki/")){
-					System.out.println(link.attr("href"));
+					System.out.println("portal: "+link.attr("href"));
 					String linkUrl = "https://en.wikipedia.org" + link.attr("href");
 					portalList.add(linkUrl);
 				}
@@ -357,11 +357,11 @@ public class JedisIndex {
 	
 	private List<String> loadWiki(String query){
 		
-		List<String> portalList = new ArrayList<String>();
-		String PortalUrl = "https://en.wikipedia.org/wiki/" + query;
+		List<String> wikiList = new ArrayList<String>();
+		String wikiUrl = "https://en.wikipedia.org/wiki/" + query;
 		
 		try {
-			Document doc = Jsoup.connect(PortalUrl).get();
+			Document doc = Jsoup.connect(wikiUrl).get();
 			Element content = doc.getElementById("mw-content-text");
         	Elements links = doc.select("a[href]");
 				
@@ -370,9 +370,9 @@ public class JedisIndex {
 				if(link.attr("href").contains("/wiki/")){
 					
 					if(link.attr("href").toLowerCase().indexOf(query.toLowerCase()) != -1) {
-						System.out.println(link.attr("href"));
+						System.out.println("wiki: "+link.attr("href"));
 						String linkUrl = "https://en.wikipedia.org" + link.attr("href");
-						portalList.add(linkUrl);
+						wikiList.add(linkUrl);
 					}
 				}
 			}  
@@ -380,8 +380,8 @@ public class JedisIndex {
 			System.out.println("Could not connect to the url");
 		}
 
-		
-		return portalList;
+		wikiList.add(wikiUrl);
+		return wikiList;
 	
 	
 	}
