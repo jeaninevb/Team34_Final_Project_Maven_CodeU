@@ -413,13 +413,14 @@ public class JedisIndex {
 	
 	public void loadDB(String[] args) throws IOException{
 		List<String> urlList = new ArrayList<String>();
-		
+		System.out.println(args);
 		for(int i=1; i<args.length; i++) {
 			String term = args[i];
 			if(!(term.toLowerCase().indexOf("--") == 0)) {
-				if(portalExists(term)) {
+				System.out.println("not or");
+				if(portalExists(term)) {System.out.println("portal");
 					urlList.addAll(loadPortal(term));
-				} else {
+				} else {System.out.println("not portal");
 					urlList.addAll(loadWiki(term));
 				}
 			}
