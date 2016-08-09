@@ -351,8 +351,6 @@ public class JedisIndex {
 		catch(IOException e){
 			System.out.println("Could not connect to the url");
 		}
-
-		portalList.add(PortalUrl);
 		
 		return portalList;
 	
@@ -422,7 +420,7 @@ public class JedisIndex {
 					urlList.addAll(loadWiki(term));
 				}
 			}
-			if(urlList.size() >= 500) {
+			if(urlList.size() >= 200) {
 				break;
 			}
 		}
