@@ -224,16 +224,17 @@ public class JedisIndex {
 		String hashname = termCounterKey(url);
 
 		// if this page has already been indexed; delete the old hash
-		t.del(hashname);
+		//t.del(hashname);
 
-		// for each term, add an entry in the termcounter and a new
-		// member of the index
-		for (String term : tc.keySet()) {
-			if(!stopList.contains(term) &&
-					!isIndexed(url)) {
-				Integer count = tc.get(term);
-				t.hset(hashname, term, count.toString());
-				t.sadd(urlSetKey(term), url);
+		if(!isIndexed(url)) {
+			// for each term, add an entry in the termcounter and a new
+			// member of the index
+			for (String term : tc.keySet()) {
+				if(!stopList.contains(term)) {
+					Integer count = tc.get(term);
+					t.hset(hashname, term, count.toString());
+					t.sadd(urlSetKey(term), url);
+				}
 			}
 		}
 		List<Object> res = t.exec();
