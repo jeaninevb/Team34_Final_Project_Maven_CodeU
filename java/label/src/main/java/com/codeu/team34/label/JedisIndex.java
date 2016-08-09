@@ -225,8 +225,8 @@ public class JedisIndex {
 		// for each term, add an entry in the termcounter and a new
 		// member of the index
 		for (String term : tc.keySet()) {
-			System.out.println(url+" - "+term);
-			if(!stopList.contains(term)) {
+			if(!stopList.contains(term) &&
+					!isIndexed(url)) {
 				Integer count = tc.get(term);
 				t.hset(hashname, term, count.toString());
 				t.sadd(urlSetKey(term), url);
@@ -305,11 +305,13 @@ public class JedisIndex {
 	 * 
 	 * @return
 	 */
-	public void deleteURLSets() {
+	public void deleteURLSets(String[] args) {
 		Set<String> keys = urlSetKeys();
 		Transaction t = jedis.multi();
 		for (String key : keys) {
-			t.del(key);
+			if(!args.contains(key.substring(7))) {
+				t.del(key);
+			}
 		}
 		t.exec();
 	}
@@ -321,11 +323,13 @@ public class JedisIndex {
 	 * 
 	 * @return
 	 */
-	public void deleteTermCounters() {
+	public void deleteTermCounters(List<String> urlList) {
 		Set<String> keys = termCounterKeys();
 		Transaction t = jedis.multi();
 		for (String key : keys) {
-			t.del(key);
+			if(!urlList.contains(key.substring(12))) {
+				t.del(key);
+			}
 		}
 		t.exec();
 	}
@@ -337,11 +341,14 @@ public class JedisIndex {
 	 * 
 	 * @return
 	 */
-	public void deleteAllKeys() {
+	public void deleteAllKeys(String[] args, List<String> urlList) {
 		Set<String> keys = jedis.keys("*");
 		Transaction t = jedis.multi();
 		for (String key : keys) {
-			t.del(key);
+			if(!urlList.contains(key.substring(12)) &&
+					!args.contains(key.substring(7))) {
+				t.del(key);
+			}
 		}
 		t.exec();
 	}
@@ -450,9 +457,9 @@ public class JedisIndex {
 				break;
 			}
 		}
-		deleteTermCounters();
-		deleteURLSets();
-		deleteAllKeys();
+		deleteTermCounters(urlList);
+		deleteURLSets(args);
+		deleteAllKeys(args, urlList);
 		System.out.println("Indexing URLs");
 		loadIndex(urlList);
 		System.out.println("Done Indexing URLs");
