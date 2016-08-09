@@ -199,30 +199,30 @@ public class CommandParser {
 		String query = "";
 		if (list != null) {
 			if (logic.equals(AND)) {
-				query+=list.get(0) + " ";
-				System.out.println("Query: "+list.get(0));
-				WikiSearch intersection = WikiSearch.search(list.get(0), index);
+				query+=list.get(0).toLowerCase() + " ";
+				System.out.println("Query: "+list.get(0).toLowerCase() );
+				WikiSearch intersection = WikiSearch.search(list.get(0).toLowerCase(), index);
 				intersection.print();
 				for (int i = 1; i < list.size(); i++) {
-					query=query+"AND " + list.get(i) + " ";
-					WikiSearch curr = WikiSearch.search(list.get(i), index);
+					query=query+"AND " + list.get(i).toLowerCase()  + " ";
+					WikiSearch curr = WikiSearch.search(list.get(i).toLowerCase(), index);
 					intersection = intersection.and(curr);
-					System.out.println("Query: " + list.get(i));
+					System.out.println("Query: " + list.get(i).toLowerCase());
 					curr.print();
 				}
 				return new WikiSearchResult(intersection,query);
 			}
 
 			if (logic.equals(OR)) {
-				query+=list.get(0) + " ";
-				System.out.println("Query: "+list.get(0));
-				WikiSearch union = WikiSearch.search(list.get(0), index);
+				query+=list.get(0).toLowerCase() + " ";
+				System.out.println("Query: "+list.get(0).toLowerCase());
+				WikiSearch union = WikiSearch.search(list.get(0).toLowerCase(), index);
 				union.print();
 				for (int i = 1; i < list.size(); i++) {
-					query=query+"OR " + list.get(i) + " ";
-					WikiSearch curr = WikiSearch.search(list.get(i), index);
+					query=query+"OR " + list.get(i).toLowerCase() + " ";
+					WikiSearch curr = WikiSearch.search(list.get(i).toLowerCase(), index);
 					union =union.or(curr);
-					System.out.println("Query: " + list.get(i));
+					System.out.println("Query: " + list.get(i).toLowerCase());
 					curr.print();
 				}
 				return new WikiSearchResult(union,query);
@@ -236,10 +236,10 @@ public class CommandParser {
 		if (list != null) {
 			if (logic.equals(AND)) {
 				for (int i = 0; i < list.size(); i++) {
-					query=query+"AND " + list.get(i) + " ";
-					WikiSearch curr = WikiSearch.search(list.get(i), index);
+					query=query+"AND " + list.get(i).toLowerCase()+ " ";
+					WikiSearch curr = WikiSearch.search(list.get(i).toLowerCase(), index);
 					result = result.and(curr);
-					System.out.println("Query: " + list.get(i));
+					System.out.println("Query: " + list.get(i).toLowerCase());
 					curr.print();
 				}
 				return new WikiSearchResult(result,query);
@@ -247,10 +247,10 @@ public class CommandParser {
 
 			if (logic.equals(OR)) {
 				for (int i = 0; i < list.size(); i++) {
-					query=query+"OR " + list.get(i) + " ";
-					WikiSearch curr = WikiSearch.search(list.get(i), index);
+					query=query+"OR " + list.get(i).toLowerCase() + " ";
+					WikiSearch curr = WikiSearch.search(list.get(i).toLowerCase(), index);
 					result =result.or(curr);
-					System.out.println("Query: " + list.get(i));
+					System.out.println("Query: " + list.get(i).toLowerCase());
 					curr.print();
 				}
 				return new WikiSearchResult(result,query);

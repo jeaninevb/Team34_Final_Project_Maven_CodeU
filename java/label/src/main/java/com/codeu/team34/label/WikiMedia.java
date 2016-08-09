@@ -54,17 +54,18 @@ public class WikiMedia {
 				
 				if (src.tagName().equals("img")){
 					String newurl = src.attr("abs:src");
-					if(!newurl.equals("") && newurl.contains("upload") && !newurl.contains("System-search") && !newurl.contains("Wikimedia-logo")){
+					if(!newurl.equals("") && newurl.contains("upload") && !newurl.contains("System-search") && !newurl.contains("-logo")){
 						String imageKey = "";
 						
 						String[] tokens = newurl.split("/");
 						if(tokens.length>=1){
 							imageKey = tokens[tokens.length-2];
+							//String[] tokens_2 = imageKey.split(".");
 						}
 							//System.out.println(idx+": "+newurl);
 							//mediaUrls.put(idx+imageKey,newurl);			
 							//idx++;
-						mediaUrls.put(imageKey,newurl);	
+						mediaUrls.put(imageKey,newurl);
 					}						
 				}
 			}  
@@ -81,7 +82,7 @@ public class WikiMedia {
 	
 		for(String imageKey: mediaUrls.keySet()){
 		
-			System.out.println(imageKey+" ==== "+mediaUrls.get(imageKey));
+			System.out.println(imageKey+" ("+mediaUrls.get(imageKey)+")");
 		}
 	}	
 // 
