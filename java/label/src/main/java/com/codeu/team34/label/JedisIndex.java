@@ -212,7 +212,7 @@ public class JedisIndex {
 		try{
 			String  thisLine = "";
 			// open input stream test.txt for reading purpose.
-			BufferedReader br = new BufferedReader("./en.txt");
+			BufferedReader br = new BufferedReader(new FileReader("./en.txt"));
 			while ((thisLine = br.readLine()) != null) {
 				stopList.add(thisLine);
 			}       
