@@ -394,15 +394,12 @@ public class JedisIndex {
 		
 		try{
 			Document doc = Jsoup.connect(PortalUrl).get();
-			String html = doc.body().toString(); 
-			System.out.println("exists?");
+			String html = doc.body().toString();
 			if(html.toLowerCase().indexOf("Wikipedia does not have a") != -1 &&
 					html.toLowerCase().indexOf("portal") != -1 &&
 					html.toLowerCase().indexOf("with this exact name.") != -1) {
-				System.out.println("true");
 				return true;
 			} else {
-				System.out.println("false");
 				return false;
 			}
 		} catch(IOException e){
@@ -413,14 +410,13 @@ public class JedisIndex {
 	
 	public void loadDB(String[] args) throws IOException{
 		List<String> urlList = new ArrayList<String>();
-		System.out.println(args);
-		for(int i=1; i<args.length; i++) {
+
+		for(int i=0; i<args.length; i++) {
 			String term = args[i];
 			if(!(term.toLowerCase().indexOf("--") == 0)) {
-				System.out.println("not or");
-				if(portalExists(term)) {System.out.println("portal");
+				if(portalExists(term)) {
 					urlList.addAll(loadPortal(term));
-				} else {System.out.println("not portal");
+				} else {
 					urlList.addAll(loadWiki(term));
 				}
 			}

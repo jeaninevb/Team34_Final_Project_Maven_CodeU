@@ -167,11 +167,7 @@ public class WikiSearch {
 		JedisIndex index = new JedisIndex(jedis); 
 		//String[] test1 = {"philosophy","--or","java"};
 		if(args.length>=1){
-			System.out.println(args.length);
-			System.out.println(args[0]);
-			System.out.println("in if");
 			index.loadDB(args);
-			System.out.println("finish load");
 			new CommandParser(args,index);
 		}else{
 			System.out.println("Please input something... Bye-bye.");
