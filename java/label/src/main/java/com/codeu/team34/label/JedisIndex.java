@@ -230,6 +230,7 @@ public class JedisIndex {
 				t.hset(hashname, term, count.toString());
 				t.sadd(urlSetKey(term), url);
 			}
+		}
 		List<Object> res = t.exec();
 
 		return res;
