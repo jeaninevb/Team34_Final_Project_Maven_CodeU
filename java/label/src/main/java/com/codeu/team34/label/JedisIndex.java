@@ -362,7 +362,8 @@ public class JedisIndex {
 			for(Element link: links){
 				
 				if(link.attr("href").toLowerCase().indexOf("/wiki/") == 0 &&
-						!link.attr("href").contains(":")){
+						!link.attr("href").contains(":") &&
+						!link.attr("href").contains("#")){
 					String linkUrl = "https://en.wikipedia.org" + link.attr("href");
 					portalList.add(linkUrl);
 				}
@@ -396,7 +397,8 @@ public class JedisIndex {
 				
 				if(link.attr("href").toLowerCase().indexOf("/wiki/") == 0){
 					
-					if(link.attr("href").toLowerCase().indexOf(query.toLowerCase()) != -1) {
+					if(link.attr("href").toLowerCase().indexOf(query.toLowerCase()) != -1 &&
+							!link.attr("href").contains("#")) {
 						String linkUrl = "https://en.wikipedia.org" + link.attr("href");
 						wikiList.add(linkUrl);
 					}
@@ -515,7 +517,11 @@ public class JedisIndex {
 		// index.indexPage(url, paragraphs);
 
 		for (String url : urls) {
-			Elements paragraphs = wf.fetchWikipedia(url);
+			try {
+				Elements paragraphs = wf.fetchWikipedia(url);
+			} catch(Exception e) {
+				
+			}
 			indexPage(url, paragraphs);
 		}
 
