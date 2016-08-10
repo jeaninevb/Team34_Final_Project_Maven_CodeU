@@ -519,10 +519,10 @@ public class JedisIndex {
 		for (String url : urls) {
 			try {
 				Elements paragraphs = wf.fetchWikipedia(url);
+				indexPage(url, paragraphs);
 			} catch(Exception e) {
 				
 			}
-			indexPage(url, paragraphs);
 		}
 
 	}
