@@ -16,6 +16,7 @@ import com.codeu.team34.label.LabelApp;
 import redis.clients.jedis.Jedis;
 
 import java.util.Arrays;
+import java.lang.Integer;
 
 
 /**
@@ -56,8 +57,9 @@ public class WikiSearch {
 		List<Entry<String, Double>> entries = sort();
 		if(entries.size()>0){
 		for (Entry<String, Double> entry: entries) {
-			System.out.println(entry);
+			System.out.println(entry.getKey());
 		}
+
 		}else{
 			System.out.println("No Result.");
 		}
@@ -166,6 +168,8 @@ public class WikiSearch {
 		Jedis jedis = JedisMaker.make();
 		JedisIndex index = new JedisIndex(jedis); 
 		//String[] test1 = {"philosophy","--or","java"};
+
+		
 		if(args.length>=1){
 			index.loadDB(args);
 			new CommandParser(args,index);

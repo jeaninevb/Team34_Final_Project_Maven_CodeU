@@ -374,7 +374,7 @@ public class JedisIndex {
 		}
 		
 		catch(IOException e){
-			System.out.println("Could not connect to the url");
+			//System.out.println("Could not connect to the url");
 		}
 		
 		return portalList;
@@ -408,7 +408,7 @@ public class JedisIndex {
 				}
 			}  
 		} catch(IOException e) {
-			System.out.println("Could not connect to the url");
+			//System.out.println("Could not connect to the url");
 		}
 
 		wikiList.add(wikiUrl);
@@ -439,6 +439,7 @@ public class JedisIndex {
 	public void loadDB(String[] args) throws IOException{
 		List<String> urlList = new ArrayList<String>();
 
+		System.out.println("Building Relevant URLs");
 		for(int i=0; i<args.length; i++) {
 			String term = args[i];
 			if(!(term.toLowerCase().indexOf("--") == 0)) {
@@ -452,14 +453,40 @@ public class JedisIndex {
 				break;
 			}
 		}
-		deleteTermCounters();
-		deleteURLSets();
-		deleteAllKeys();
+
+		if(checkUsage()>0.70){
+			deleteTermCounters();
+			deleteURLSets();
+			deleteAllKeys();
+		}
 		System.out.println("Indexing URLs");
 		loadIndex(urlList);
 		System.out.println("Done Indexing URLs");
 	}
 
+
+	public Double checkUsage(){
+		String[] lines = jedis.info().split(System.getProperty("line.separator"));
+		//System.out.println(jedis.info());
+		Double used=0.0;
+		Double peak=0.0;
+		for(String line:lines){
+			if(line.contains("used_memory_rss:")){
+				String[] usage = line.split(":");
+				//System.out.println(usage[1]);
+				used = Double.parseDouble(usage[1]);
+			}
+			if(line.contains("used_memory_peak:")){
+				String[] usage = line.split(":");
+				//System.out.println(usage[1]);
+				peak = Double.parseDouble(usage[1]);
+			}
+		}
+
+		Double perct = used/peak;
+		System.out.println("Current Database usage:" +Double.toString(perct*100)+"%");
+		return perct;
+	}
 
 
 	/**
@@ -517,11 +544,13 @@ public class JedisIndex {
 		// index.indexPage(url, paragraphs);
 
 		for (String url : urls) {
-			try {
-				Elements paragraphs = wf.fetchWikipedia(url);
-				indexPage(url, paragraphs);
-			} catch(Exception e) {
+			if(!isIndexed(url)){
+				try {
+					Elements paragraphs = wf.fetchWikipedia(url);
+					indexPage(url, paragraphs);
+				} catch(Exception e) {
 				
+				}
 			}
 		}
 

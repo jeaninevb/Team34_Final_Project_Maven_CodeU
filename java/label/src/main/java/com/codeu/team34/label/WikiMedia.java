@@ -72,7 +72,7 @@ public class WikiMedia {
 		}
 		
 		catch(IOException e){
-			System.out.println("Could not connect to the url");
+			//System.out.println("Could not connect to the url");
 		}
 		
 	
@@ -80,11 +80,17 @@ public class WikiMedia {
 	
 	public void print(){
 	
+		if(mediaUrls.size()>=1){
 		for(String imageKey: mediaUrls.keySet()){
-		
-			System.out.println(imageKey+" ("+mediaUrls.get(imageKey)+")");
+			System.out.println("=======================================");
+			System.out.println(imageKey);
+			System.out.println("("+mediaUrls.get(imageKey)+")");
+			System.out.println("=======================================");
 		}
-	}	
+	}else{
+		System.out.println("No WikiMedia Page.");
+	}
+}	
 	
 	
 	public static void main(String[] args) throws IOException {
